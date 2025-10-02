@@ -1,0 +1,7 @@
+__pycache__/
+.vscode/
+.DS_Store
+.pytest_cache/
+
+DISCLAIMER
+requirements.md
