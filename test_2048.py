@@ -1,128 +1,35 @@
 import pytest
-from _2048 import merge_left, merge_right
+import json
+from _2048 import merge_left, merge_right, merge_up, merge_down
 
-left_cases = [
-    (
-        [[2, 2, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, 2, 2, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, 2, 2, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, 4, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, None, 2, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, 2, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[512, 512, 256, 256], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[1024, 512, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, None, None, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[4, 4, 4, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[8, 4, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[128, 128, None, 128], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[256, 128, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[4, None, 4, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[8, 4, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[8, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[8, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, 4, 2, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[2, 4, 2, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, 2, None, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[4, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[256, None, 256, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[512, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-]
+def load_test_files(filepath):
+    with open(filepath, 'r') as file:
+        data = json.load(file)
+    
+    test_cases = []
 
-right_cases = [
-    (
-        [[2, 2, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, 2, 2, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, 2, 2, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 4, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, None, 2, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 2, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[512, 512, 256, 256], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 1024, 512], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, None, None, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[4, 4, 4, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 4, 8], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[128, 128, None, 128], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 128, 256], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[4, None, 4, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, 4, 8], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[8, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 8], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[2, 4, 2, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[2, 4, 2, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[None, 2, None, 2], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 4], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-    (
-        [[256, None, 256, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]],
-        [[None, None, None, 512], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
-    ),
-]
+    for item in data:
+        test_cases.append((item['input'], item['expected']))
+    
+    return test_cases
 
-@pytest.mark.parametrize("board, expected", left_cases)
-def test_merge_left(board, expected):
-    assert merge_left(board) == expected
+merge_left_cases = load_test_files('tests/merge_left.txt')
+merge_right_cases = load_test_files('tests/merge_right.txt')
+merge_up_cases = load_test_files('tests/merge_up.txt')
+merge_down_cases = load_test_files('tests/merge_down.txt')
 
-@pytest.mark.parametrize("board, expected", right_cases)
-def test_merge_right(board, expected):
-    assert merge_right(board) == expected
+@pytest.mark.parametrize("input, output", merge_left_cases)
+def test_merge_left(input, output):
+    assert merge_left(input, mock=True) == output
+
+@pytest.mark.parametrize("input, output", merge_right_cases)
+def test_merge_right(input, output):
+    assert merge_right(input, mock=True) == output
+
+@pytest.mark.parametrize("input, output", merge_up_cases)
+def test_merge_up(input, output):
+    assert merge_up(input, mock=True) == output
+
+@pytest.mark.parametrize("input, output", merge_down_cases)
+def test_merge_down(input, output):
+    assert merge_down(input, mock=True) == output
