@@ -1,16 +1,16 @@
 # 2048
 
-### Installation:
+##### Installation:
 
 - python3 -m venv venv
 - source venv/bin/activate
 - pip3 install requirements.txt
 
-### To play:
+##### To play:
 
 - python3 \_2048.py
 
-### To test:
+##### To test:
 
 - pytest
 
